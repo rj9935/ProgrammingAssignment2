@@ -28,7 +28,7 @@ makeCacheMatrix <- function(x = matrix()) {
     invX <- NULL
     
     ## Compute and cache the matrix checksum (simple grand sum in this case)
-    cs<-sum(rowSums(x))
+    cs <- sum(rowSums(x))
     
     set <- function(y){
         ## Cache the new matrix
@@ -36,7 +36,7 @@ makeCacheMatrix <- function(x = matrix()) {
         ## If the matrix is changed then the inverse is incorrect
         invX <<- NULL
         ## The checksum also requires to be recomputed and cached
-        cs<<-sum(rowSums(x))
+        cs <<- sum(rowSums(x))
         }
     
     get <- function() x  
@@ -67,7 +67,7 @@ cacheSolve <- function(x, ...) {
     ## Get the cached values of the matrix, the inverse & the checksum
     myData <- x$get()    
     myinvX <- x$getinverse()
-    mycs<- x$getcs()
+    mycs <- x$getcs()
         
     ## Test if the computed checksum for the matrix agrees with the cached value
     if(abs(mycs-sum(rowSums(myData)))<1.0E-10){
