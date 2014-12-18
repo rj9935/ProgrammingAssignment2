@@ -17,8 +17,8 @@
 ## (3) getcs() - retreives the checksum from cache
 ## (4) getinverse() - retrieves the inverse matrix from cache 
 ## (5) setinverse() - overwrites the cached inverse matrix with a new inverse
-## (6) change() - overwrites the matrix - this function allows testing of the 
-##                changed matrix detection functionality 
+## (6) change() - overwrites the matrix (only) - this function allows testing of
+##                the changed matrix detection functionality 
 ##
 ## NB - set(), setinverse() & change() use the superassignment operator (<<-) 
 ## to overwrite cached values in the object (not make local copies)
@@ -46,8 +46,8 @@ makeCacheMatrix <- function(x = matrix()) {
     
     change <- function(y){
         x <<- y   
-        ## Since this function simulates changes to the values of the
-        ## original matrix elements the invX & cs items are left unchanged
+        ## Since this function simulates unexpected changes in the values of the
+        ## cached matrix elements the invX & cs items are left unchanged
         }
     
     list(set = set, get = get, getcs = getcs,
