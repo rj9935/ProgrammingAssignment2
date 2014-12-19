@@ -9,7 +9,7 @@
 ## implemented here is very simple (grand sum) but there are R packages with 
 ## more sophisticated implementations (eg MD5) if needed
 computeCs <- function(x){
-    ## Compute and cache the checksum from the matrix x - NB the assignment
+    ## Compute and return the checksum from the matrix x - NB the assignment
     ## operator is used here (not superassignment) since it is vital not to 
     ## overwrite the cached value of cs in the cachedMatrix object.
     cs <- sum(rowSums(x)) 
@@ -24,17 +24,15 @@ computeCs <- function(x){
 ## (3) getcs() - retreives the checksum from cache
 ## (4) getinverse() - retrieves the inverse matrix from cache 
 ## (5) setinverse() - overwrites the cached inverse matrix with a new inverse
-## (6) change() - overwrites the matrix (only) - this function allows testing of
-##                the changed matrix detection functionality 
 ##
-## NB - set(), setinverse() & change() use the superassignment operator (<<-) 
-## to overwrite cached values in the object (not make local copies)
+## NB - set() & setinverse() use the superassignment operator (<<-) to overwrite 
+## cached values in the object (not make local copies)
 makeCacheMatrix <- function(x = matrix()) {
 
     ## On instantiation the inverse matrix has not yet been computed
     invX <- NULL
     
-    ## Compute and cache the matrix checksum
+    ## On instantiation compute and cache the matrix checksum
     cs <- computeCs(x)
     
     set <- function(y){
@@ -50,16 +48,9 @@ makeCacheMatrix <- function(x = matrix()) {
     getcs <- function() cs    
     setinverse <- function(inverse) invX <<- inverse
     getinverse <- function() invX    
-        
-    change <- function(y){
-        ## Since this function simulates unexpected changes in the values of the
-        ## cached matrix elements the invX & cs items are left unchanged ie the
-        ## cached inverse is no longer the inverse of the cached matrix
-         x <<- y   
-        }
-    
+            
     list(set = set, get = get, getcs = getcs,
-         setinverse = setinverse, getinverse = getinverse, change = change)
+         setinverse = setinverse, getinverse = getinverse)
 }
 
 ## The cacheSolve function takes a makeCacheMatrix object and returns the 
@@ -111,7 +102,8 @@ cacheSolve <- function(x, ...) {
 ## > cm$set(matrix(rnorm(4000000),2000,2000))
 ## > icm <- cacheSolve(cm)
 ## > icm <- cacheSolve(cm)
-## > cm$change(matrix(rnorm(4000000),2000,2000))
+## > env <- environment(cm$getinverse) # gets the environment of the matrix x
+## > assign("x", matrix(rnorm(4000000),2000,2000), envir = env)  # corrupts x
 ## > icm <- cacheSolve(cm)
 ## > icm <- cacheSolve(cm)
 ## > cm$set(matrix(rnorm(4000000),2000,2000))
