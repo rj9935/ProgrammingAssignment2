@@ -8,12 +8,7 @@
 ## The computeCs function computes and returns a matrix checksum - the one
 ## implemented here is very simple (grand sum) but there are R packages with 
 ## more sophisticated implementations (eg MD5) if needed.
-computeCS <- function(Input){
-    ## Compute and return the checksum from the input matrix - NB the assignment
-    ## operator is used here (not superassignment) since it is vital not to 
-    ## overwrite the cached value of the checksum in the cachedMatrix object.
-    Checksum <- sum(rowSums(Input)) 
-}
+computeCS <- function(Input){ Checksum <- sum(rowSums(Input)) }
 
 ## The makeCacheMatrix function inputs a matrix and creates an object 
 ## containing the matrix, the matrix checksum, the inverse matrix (initially 
