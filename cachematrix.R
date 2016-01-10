@@ -2,13 +2,13 @@
 ## caching. In the programming assignment it's not clear if more protection 
 ## against cached value changes than those in the example code are needed. So a 
 ## rudimentary checksum is used here. To protect against malicious changes a 
-## better checksum could be used such as the MD5. 
-## A simple test procedure is at the foot of this file.
+## better hash code/checksum could be used such as the the MD5 (see 
+## {digest}digest(..., algo="md5"). A test procedure is at the foot of this file.
 
-## The computeCs function computes and returns a matrix checksum - the one
+## The computeCS function computes and returns a matrix checksum - the one
 ## implemented here is very simple (grand sum) but there are R packages with 
-## more sophisticated implementations (eg MD5) if needed.
-computeCS <- function(Input){ Checksum <- sum(rowSums(Input)) }
+## more sophisticated implementations (eg MD5 in {digest}digest()) if needed.
+computeCS 			<- function(Input){ Checksum <- sum(rowSums(Input)) }
 
 ## The makeCacheMatrix function inputs a matrix and creates an object 
 ## containing the matrix, the matrix checksum, the inverse matrix (initially 
@@ -24,32 +24,32 @@ computeCS <- function(Input){ Checksum <- sum(rowSums(Input)) }
 ##
 ## NB - setmatrix(), setinverse() & setinverseCS() use the super assignment
 ## operator (<<-) to overwrite cached values in the object (not local copies)
-makeCacheMatrix <- function(Matrix = matrix()) {
+makeCacheMatrix 	<- function(Matrix = matrix()) {
 
     ## On instantiation the inverse matrix has not yet been computed
-    Inverse <- NULL
+    Inverse 		<- NULL
     ## As the inverse matrix has not yet been computed set its checksum to NULL
-    InverseCS <- NULL
+    InverseCS 		<- NULL
     ## On instantiation compute and cache the direct matrix checksum
-    MatrixCS <- computeCS(Matrix)
+    MatrixCS 		<- computeCS(Matrix)
     
-    setmatrix <- function(Input){
+    setmatrix 		<- function(Input){
         ## Cache the new matrix
-        Matrix <<- Input
+        Matrix 		<<- Input
         ## If the matrix is changed then the inverse is incorrect
-        Inverse <<- NULL
+        Inverse 	<<- NULL
         ## The inverse matrix checksum is also now incorrect
-        InverseCS <- NULL
+        InverseCS 	<- NULL
         ## The direct matrix checksum also requires to be recomputed and cached
-        MatrixCS <<- computeCS(Matrix)
+        MatrixCS 	<<- computeCS(Matrix)
         }
     
-    getmatrix <- function() Matrix 
-    getmatrixCS <- function() MatrixCS   
-    setinverse <- function(Input) Inverse <<- Input
-    getinverse <- function() Inverse 
-    setinverseCS <- function(Input) InverseCS <<- Input
-    getinverseCS <- function() InverseCS
+    getmatrix 		<- function() Matrix 
+    getmatrixCS 	<- function() MatrixCS   
+    setinverse 		<- function(Input) Inverse <<- Input
+    getinverse 		<- function() Inverse 
+    setinverseCS 	<- function(Input) InverseCS <<- Input
+    getinverseCS 	<- function() InverseCS
             
     list(setmatrix = setmatrix, getmatrix = getmatrix, 
          getmatrixCS = getmatrixCS, setinverse = setinverse, 
@@ -65,13 +65,13 @@ makeCacheMatrix <- function(Matrix = matrix()) {
 ## correct, if so, it returns the cached value of the inverse. If not, it calls 
 ## solve() to invert the matrix, computes the inverse checksum, caches these and 
 ## returns the inverse.
-cacheSolve <- function(Object, ...) {
+cacheSolve 			<- function(Object, ...) {
 
     ## Get the cached values of the matrix, its inverse and the checksums
-    myMatrix <- Object$getmatrix()    
-    myInverse <- Object$getinverse()
-    myMatrixCS <- Object$getmatrixCS()
-    myInverseCS <- Object$getinverseCS()
+    myMatrix 		<- Object$getmatrix()    
+    myInverse 		<- Object$getinverse()
+    myMatrixCS 		<- Object$getmatrixCS()
+    myInverseCS 	<- Object$getinverseCS()
     
     ## Test if the checksum for the cached matrix agrees with the cached value
     if(abs(myMatrixCS-computeCS(myMatrix)) < 1.0E-10){
@@ -87,8 +87,8 @@ cacheSolve <- function(Object, ...) {
             ## Either the inverse matrix is not in cache or its checksum is 
             ## incorrect, either way recompute & cache both and return inverse
             message("inverting matrix")
-            myInverse <- solve(myMatrix, ...)
-            myInverseCS <- computeCS(myInverse)
+            myInverse 		<- solve(myMatrix, ...)
+            myInverseCS 	<- computeCS(myInverse)
             Object$setinverse(myInverse)
             Object$setinverseCS(myInverseCS)
             return(myInverse)
